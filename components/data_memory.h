@@ -26,7 +26,7 @@ public:
         }
 
         assert(address < memory_.size());
-        assert((std::is_same<T, uint8_t>() == true) || (std::is_same<T, uint16_t>() == true) || (std::is_same<T, uint32_t>() == true));
+        assert(CheckType<T>());
 
         T data = static_cast<T>(writeData);
         std::memcpy(&memory_ + address, &data, sizeof(T));
@@ -34,15 +34,24 @@ public:
 
     // T = [uint8_t, uint16_t, uint32_t]
     template<typename T>
-    uint32_t Read(uint32_t address)
+    uint64_t Read(uint32_t address)
     {
         assert(address < memory_.size());
-        assert((std::is_same<T, uint8_t>() == true) || (std::is_same<T, uint16_t>() == true) || (std::is_same<T, uint32_t>() == true));
+        assert(CheckType<T>());
 
         uint32_t result = 0;        
         std::memcpy(&result, &memory_ + address, sizeof(T));
         
         return result;
+    }
+
+private:
+    template<typename T>
+    bool CheckType()
+    {
+        return (std::is_same<T, uint8_t>()  == true) || 
+               (std::is_same<T, uint16_t>() == true) || 
+               (std::is_same<T, uint32_t>() == true);
     }
 
 private:

@@ -26,14 +26,25 @@ add_custom_target(clang-force-format
     ${ALL_SOURCES_FILES}
 )
 
+# ----------------------------------------------------------------------------
+
 set(SOURCES
     components/data_memory.cpp
     components/insn_memory.cpp
     components/regfile.cpp
+    instruction/instruction.cpp
+    pipeline/fetch.cpp
+    pipeline/decode.cpp
+    pipeline/execute.cpp
+    pipeline/memory.cpp
+    pipeline/writeback.cpp
+    utils/bit_ops
+    simulator.cpp
 )
+
 add_library(simulator_static STATIC ${SOURCES})
 target_include_directories(simulator_static PUBLIC ${RISCV_PIPELINE_ROOT})
 
-add_executable(simulator simulator.cpp)
+add_executable(simulator main.cpp)
 add_dependencies(simulator simulator_static)
 target_link_libraries(simulator PUBLIC simulator_static)

@@ -3,24 +3,30 @@
 
 #include "config.h"
 #include "utils/macros.h"
-#include "pipeline/instruction.h"
+#include "instruction/instruction.h"
 
 #include <vector>
 #include <cassert>
 
 class InsnMemory {
 public:
-    NO_COPY_SEMANTIC(InsnMemory);
-    NO_MOVE_SEMANTIC(InsnMemory);
+    DEFAULT_COPY_SEMANTIC(InsnMemory);
+    DEFAULT_MOVE_SEMANTIC(InsnMemory);
 
-    InsnMemory(const std::vector<Instruction> insns) : instructions_(insns)
-      {}
+    explicit InsnMemory(const std::vector<uint32_t> &rawInstructions)
+    {
+        for (auto it : rawInstructions) {
+            instructions_.push_back(Instruction{it});
+        }
+    }
+
+    InsnMemory() = default;
     ~InsnMemory() = default;
 
-    Instruction Read(uint32_t pc)
+    Instruction Read(uint64_t pc)
     {
         assert(pc % Instruction::INSTRUCTION_LENGTH == 0);
-        uint32_t pos = pc / Instruction::INSTRUCTION_LENGTH;
+        uint64_t pos = pc / Instruction::INSTRUCTION_LENGTH;
 
         assert(pos < instructions_.size());
         return instructions_[pos];
